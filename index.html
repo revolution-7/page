@@ -3,26 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机背景生成器</title>
+    <title>随机渐变背景生成器</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            transition: background 1s ease; /* 背景过渡效果 */
-        }
-        .container {
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            color: white;
             text-align: center;
+            transition: background 1s ease; /* 背景渐变过渡效果 */
         }
         h1 {
             font-size: 3rem;
             margin-bottom: 20px;
+            color: white;
         }
         button {
             padding: 15px 30px;
@@ -39,25 +36,30 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>点击按钮，随机生成背景</h1>
-        <button onclick="changeBackground()">点击生成背景</button>
+    <div>
+        <h1>点击按钮，随机生成渐变背景</h1>
+        <button onclick="changeGradient()">点击生成背景</button>
     </div>
 
     <script>
-        const backgrounds = [
-            'url("https://source.unsplash.com/random/1920x1080/?nature")',
-            'url("https://source.unsplash.com/random/1920x1080/?city")',
-            'url("https://source.unsplash.com/random/1920x1080/?space")',
-            'url("https://source.unsplash.com/random/1920x1080/?abstract")',
-            'url("https://source.unsplash.com/random/1920x1080/?beach")'
-        ];
+        // 随机生成颜色的函数
+        function randomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
 
-        function changeBackground() {
-            const randomIndex = Math.floor(Math.random() * backgrounds.length);
-            document.body.style.backgroundImage = backgrounds[randomIndex];
-            document.body.style.backgroundSize = 'cover';
-            document.body.style.backgroundPosition = 'center';
+        // 生成随机渐变背景
+        function changeGradient() {
+            const color1 = randomColor();
+            const color2 = randomColor();
+            const angle = Math.floor(Math.random() * 360); // 随机角度（0-360度）
+            
+            // 应用渐变背景
+            document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
         }
     </script>
 </body>
