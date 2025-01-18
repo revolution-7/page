@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机渐变背景生成器</title>
+    <title>动态渐变背景 + 波纹效果</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,13 +14,17 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            transition: background 1s ease;
+            overflow: hidden;
+            position: relative;
+            transition: background 2s ease-in-out; /* 平滑背景切换 */
         }
+
         h1 {
             font-size: 3rem;
             margin-bottom: 20px;
             color: white;
         }
+
         button {
             padding: 15px 30px;
             font-size: 1.2rem;
@@ -30,28 +34,43 @@
             cursor: pointer;
             border-radius: 5px;
             margin: 10px;
+            z-index: 10;
         }
+
         button:hover {
             background-color: #45a049;
         }
+
         p {
             color: white;
             font-size: 1.2rem;
+            z-index: 10;
+        }
+
+        /* 波纹效果样式 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 1s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
     <div>
-        <h1>点击按钮，随机生成渐变背景并获取地理位置和时间</h1>
-        <button onclick="changeGradient()">点击生成背景</button>
-        <button onclick="downloadBackground()">下载背景图片</button>
-        <p id="location"></p>
-        <p id="time"></p>
+        <h1>动态渐变背景 + 点击波纹效果</h1>
+        <button onclick="changeGradient()">切换背景</button>
     </div>
 
     <script>
-        let currentGradient = ''; // 用来存储当前背景的渐变值
-
         // 随机生成颜色的函数
         function randomColor() {
             const letters = '0123456789ABCDEF';
@@ -62,74 +81,40 @@
             return color;
         }
 
-        // 获取地理位置的函数
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    document.getElementById("location").textContent = 当前位置: 纬度 ${lat}, 经度 ${lon};
-                }, function(error) {
-                    document.getElementById("location").textContent = "无法获取位置";
-                });
-            } else {
-                document.getElementById("location").textContent = "浏览器不支持地理位置";
-            }
-        }
-
-        // 获取当前时间的函数
-        function getTime() {
-            const currentTime = new Date();
-            const timeString = currentTime.toLocaleString(); // 使用本地格式显示时间
-            document.getElementById("time").textContent = 当前时间: ${timeString};
-        }
-
-        // 生成随机渐变背景
+        // 随机生成渐变背景并应用
         function changeGradient() {
             const color1 = randomColor();
             const color2 = randomColor();
-            const angle = Math.floor(Math.random() * 360); // 随机角度（0-360度）
-            
-            // 应用渐变背景
-            document.body.style.background = linear-gradient(${angle}deg, ${color1}, ${color2});
-            currentGradient = {color1, color2, angle}; // 存储当前的渐变颜色和角度
+            const angle = Math.floor(Math.random() * 360); // 随机角度
 
-            // 获取地理位置和时间
-            getLocation();
-            getTime();
+            // 使用平滑过渡的方式切换背景
+            document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
         }
 
-        // 下载背景图片的函数
-        function downloadBackground() {
-            if (!currentGradient) {
-                alert('请先生成一个渐变背景！');
-                return;
-            }
+        // 鼠标点击产生波纹效果
+        document.body.addEventListener('click', function (e) {
+            // 获取鼠标位置
+            const x = e.pageX;
+            const y = e.pageY;
 
-            const { color1, color2, angle } = currentGradient;
+            // 创建波纹元素
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
 
-            // 创建一个canvas元素，用于将背景绘制成图片
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            // 设置波纹样式
+            ripple.style.left = `${x - 100}px`; // 减去半径，居中对齐
+            ripple.style.top = `${y - 100}px`;
+            ripple.style.width = ripple.style.height = '200px'; // 波纹大小
+            ripple.style.background = 'rgba(255, 255, 255, 0.5)'; // 波纹颜色
 
-            // 创建渐变
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradient.addColorStop(0, color1);
-            gradient.addColorStop(1, color2);
+            // 添加波纹到页面
+            document.body.appendChild(ripple);
 
-            // 将渐变填充到canvas上
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // 将canvas转换为图片并下载
-            const dataURL = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.href = dataURL;
-            link.download = 'background.png'; // 设置下载文件名
-            link.click(); // 触发下载
-        }
+            // 动画结束后移除波纹
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        });
     </script>
 </body>
-</html>|
+</html>
