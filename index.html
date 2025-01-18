@@ -29,6 +29,7 @@
             color: white;
             cursor: pointer;
             border-radius: 5px;
+            margin: 10px;
         }
         button:hover {
             background-color: #45a049;
@@ -43,11 +44,14 @@
     <div>
         <h1>点击按钮，随机生成渐变背景并获取地理位置和时间</h1>
         <button onclick="changeGradient()">点击生成背景</button>
+        <button onclick="downloadBackground()">下载背景图片</button>
         <p id="location"></p>
         <p id="time"></p>
     </div>
 
     <script>
+        let currentGradient = ''; // 用来存储当前背景的渐变值
+
         // 随机生成颜色的函数
         function randomColor() {
             const letters = '0123456789ABCDEF';
@@ -88,10 +92,31 @@
             
             // 应用渐变背景
             document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+            currentGradient = `linear-gradient(${angle}deg, ${color1}, ${color2})`; // 存储当前的渐变背景
 
             // 获取地理位置和时间
             getLocation();
             getTime();
+        }
+
+        // 下载背景图片的函数
+        function downloadBackground() {
+            // 创建一个canvas元素，用于将背景绘制成图片
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // 将背景绘制到canvas上
+            ctx.fillStyle = currentGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 将canvas转换为图片并下载
+            const dataURL = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'background.png'; // 设置下载文件名
+            link.click(); // 触发下载
         }
     </script>
 </body>
