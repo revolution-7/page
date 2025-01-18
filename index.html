@@ -14,7 +14,7 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            transition: background 1s ease; /* 背景渐变过渡效果 */
+            transition: background 1s ease;
         }
         h1 {
             font-size: 3rem;
@@ -33,12 +33,18 @@
         button:hover {
             background-color: #45a049;
         }
+        p {
+            color: white;
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body>
     <div>
-        <h1>点击按钮，随机生成渐变背景</h1>
+        <h1>点击按钮，随机生成渐变背景并获取地理位置和时间</h1>
         <button onclick="changeGradient()">点击生成背景</button>
+        <p id="location"></p>
+        <p id="time"></p>
     </div>
 
     <script>
@@ -52,6 +58,28 @@
             return color;
         }
 
+        // 获取地理位置的函数
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    document.getElementById("location").textContent = `当前位置: 纬度 ${lat}, 经度 ${lon}`;
+                }, function(error) {
+                    document.getElementById("location").textContent = "无法获取位置";
+                });
+            } else {
+                document.getElementById("location").textContent = "浏览器不支持地理位置";
+            }
+        }
+
+        // 获取当前时间的函数
+        function getTime() {
+            const currentTime = new Date();
+            const timeString = currentTime.toLocaleString(); // 使用本地格式显示时间
+            document.getElementById("time").textContent = `当前时间: ${timeString}`;
+        }
+
         // 生成随机渐变背景
         function changeGradient() {
             const color1 = randomColor();
@@ -60,6 +88,10 @@
             
             // 应用渐变背景
             document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+
+            // 获取地理位置和时间
+            getLocation();
+            getTime();
         }
     </script>
 </body>
