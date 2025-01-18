@@ -92,7 +92,7 @@
             
             // 应用渐变背景
             document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
-            currentGradient = `linear-gradient(${angle}deg, ${color1}, ${color2})`; // 存储当前的渐变背景
+            currentGradient = {color1, color2, angle}; // 存储当前的渐变颜色和角度
 
             // 获取地理位置和时间
             getLocation();
@@ -101,14 +101,26 @@
 
         // 下载背景图片的函数
         function downloadBackground() {
+            if (!currentGradient) {
+                alert('请先生成一个渐变背景！');
+                return;
+            }
+
+            const { color1, color2, angle } = currentGradient;
+
             // 创建一个canvas元素，用于将背景绘制成图片
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            // 将背景绘制到canvas上
-            ctx.fillStyle = currentGradient;
+            // 创建渐变
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+
+            // 将渐变填充到canvas上
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // 将canvas转换为图片并下载
