@@ -16,7 +16,7 @@
             text-align: center;
             overflow: hidden;
             position: relative;
-            transition: background 2s ease-in-out; /* 平滑背景切换 */
+            transition: background 5s ease-in-out; /* 初始背景过渡时间 */
         }
 
         h1 {
@@ -67,10 +67,13 @@
 <body>
     <div>
         <h1>动态渐变背景 + 点击波纹效果</h1>
-        <button onclick="changeGradient()">切换背景</button>
+        <button onclick="accelerateGradient()">加速背景变化</button>
     </div>
 
     <script>
+        let currentInterval = 5000; // 初始背景变化时间为5秒
+        let gradientInterval; // 定时器变量
+
         // 随机生成颜色的函数
         function randomColor() {
             const letters = '0123456789ABCDEF';
@@ -81,14 +84,25 @@
             return color;
         }
 
-        // 随机生成渐变背景并应用
-        function changeGradient() {
+        // 应用随机渐变背景
+        function applyGradient() {
             const color1 = randomColor();
             const color2 = randomColor();
-            const angle = Math.floor(Math.random() * 360); // 随机角度
-
-            // 使用平滑过渡的方式切换背景
+            const angle = Math.floor(Math.random() * 360);
             document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+        }
+
+        // 动态更新背景
+        function startGradientChange() {
+            clearInterval(gradientInterval); // 清除之前的定时器
+            gradientInterval = setInterval(applyGradient, currentInterval);
+        }
+
+        // 点击按钮加速背景变化
+        function accelerateGradient() {
+            currentInterval = 2500; // 加速背景变化时间为2.5秒
+            document.body.style.transition = 'background 2.5s ease-in-out'; // 更改背景过渡时间
+            startGradientChange();
         }
 
         // 鼠标点击产生波纹效果
@@ -115,6 +129,10 @@
                 ripple.remove();
             });
         });
+
+        // 初始化背景变化
+        applyGradient(); // 立即应用初始背景
+        startGradientChange(); // 启动自动背景变化
     </script>
 </body>
 </html>
