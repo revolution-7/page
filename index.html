@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机渐变背景生成器</title>
+    <title>获取当前时间</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,12 +14,22 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            transition: background 1s ease; /* 背景渐变过渡效果 */
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            font-size: 3rem;
+            font-size: 2rem;
             margin-bottom: 20px;
-            color: white;
+        }
+        .time-display {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
         }
         button {
             padding: 15px 30px;
@@ -36,30 +46,26 @@
     </style>
 </head>
 <body>
-    <div>
-        <h1>点击按钮，随机生成渐变背景</h1>
-        <button onclick="changeGradient()">点击生成背景</button>
+    <div class="container">
+        <h1>点击按钮获取当前时间</h1>
+        <div class="time-display" id="timeDisplay">请点击按钮获取时间</div>
+        <button onclick="displayCurrentTime()">获取当前时间</button>
     </div>
 
     <script>
-        // 随机生成颜色的函数
-        function randomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
+        // 获取当前时间并显示
+        function displayCurrentTime() {
+            const now = new Date();  // 获取当前时间
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const date = now.toLocaleDateString();  // 获取当前日期
 
-        // 生成随机渐变背景
-        function changeGradient() {
-            const color1 = randomColor();
-            const color2 = randomColor();
-            const angle = Math.floor(Math.random() * 360); // 随机角度（0-360度）
-            
-            // 应用渐变背景
-            document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+            // 格式化时间
+            const timeString = `${date} ${hours}:${minutes}:${seconds}`;
+
+            // 显示时间
+            document.getElementById('timeDisplay').textContent = timeString;
         }
     </script>
 </body>
